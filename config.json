@@ -1,0 +1,31 @@
+{
+    "title": "The title: title",
+    "merchants": [
+        {
+            "name": "Merchant 1",
+            "address": "Address 1",
+            "phone": "Phone 1",
+            "email": "Email 1",
+            "website": "Website 1",
+            "description": "Description 1",
+            "logo": "Logo 1",
+            "categories": [
+                "Category 1",
+                "Category 2"
+            ]
+        },
+        {
+            "name": "Merchant 2",
+            "address": "Address 2",
+            "phone": "Phone 2",
+            "email": "Email 2",
+            "website": "Website 2",
+            "description": "Description 2",
+            "logo": "Logo 2",
+            "categories": [
+                "Category 1",
+                "Category 2"
+            ]
+        }
+    ]
+}
