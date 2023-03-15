@@ -53,15 +53,15 @@
                     :columns="[
                         { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
                         { name: 'address', label: 'Address', field: 'address', align: 'left', sortable: true },
-                        { name: 'phone', label: 'Phone', field: 'phone', align: 'left', sortable: true },
-                        { name: 'email', label: 'Email', field: 'email', align: 'left', sortable: true },
                         { name: 'website', label: 'Website', field: 'website', align: 'left', sortable: true },
-                        { name: 'description', label: 'Description', field: 'description', align: 'left', sortable: true },
                     ]"
                     row-key="id"
+                    selection="single"
                     title="Stores"
                     :separator="separator"
+                    :selected-rows-label="getStoreString"
                     :pagination="initialPagination"
+                    v-model:selected="store"
                 />
             </div>
         </div>
@@ -71,6 +71,8 @@
 <style></style>
   
 <script>
+import axios from 'axios';
+
 export default {
     name: 'HomePage',
     data() {
@@ -83,122 +85,42 @@ export default {
                 rowsPerPage: 5,
             },
             separator: 'none',
-            merchants: [
-                {
-                    id: 1,
-                    name: 'Merchant 1',
-                    address: 'Address 1',
-                    phone: 'Phone 1',
-                    email: 'Email 1',
-                    website: 'Website 1',
-                    description: 'Description 1',
-                },
-                {
-                    id: 2,
-                    name: 'Merchant 2',
-                    address: 'Address 2',
-                    phone: 'Phone 2',
-                    email: 'Email 2',
-                    website: 'Website 2',
-                    description: 'Description 2',
-                },
-                {
-                    id: 3,
-                    name: 'Merchant 3',
-                    address: 'Address 3',
-                    phone: 'Phone 3',
-                    email: 'Email 3',
-                    website: 'Website 3',
-                    description: 'Description 3',
-                }
-            ],
-            products: [
-                {
-                    id: 1,
-                    name: 'Product 1',
-                    description: 'Description 1',
-                    price: 100,
-                    merchant: 1,
-                    stores: [1, 3],
-                },
-                {
-                    id: 2,
-                    name: 'Product 2',
-                    description: 'Description 2',
-                    price: 200,
-                    merchant: 1,
-                    stores: [1, 2],
-                },
-                {
-                    id: 3,
-                    name: 'Product 3',
-                    description: 'Description 3',
-                    price: 300,
-                    merchant: 2,
-                    stores: [2, 3],
-                },
-                {
-                    id: 4,
-                    name: 'Product 4',
-                    description: 'Description 4',
-                    price: 400,
-                    merchant: 2,
-                    stores: [1, 2, 3],
-                },
-                {
-                    id: 5,
-                    name: 'Product 5',
-                    description: 'Description 5',
-                    price: 500,
-                    merchant: 3,
-                    stores: [1, 3],
-                },
-                {
-                    id: 6,
-                    name: 'Product 6',
-                    description: 'Description 6',
-                    price: 600,
-                    merchant: 3,
-                    stores: [1, 2, 3],
-                },
-            ],
-            stores: [
-                {
-                    id: 1,
-                    name: 'Store 1',
-                    address: 'Address 1',
-                    phone: 'Phone 1',
-                    email: 'Email 1',
-                    website: 'Website 1',
-                    description: 'Description 1',
-                },
-                {
-                    id: 2,
-                    name: 'Store 2',
-                    address: 'Address 2',
-                    phone: 'Phone 2',
-                    email: 'Email 2',
-                    website: 'Website 2',
-                    description: 'Description 2',
-                },
-                {
-                    id: 3,
-                    name: 'Store 3',
-                    address: 'Address 3',
-                    phone: 'Phone 3',
-                    email: 'Email 3',
-                    website: 'Website 3',
-                    description: 'Description 3',
-                }
-            ],
+            merchants: [],
+            products: [],
+            stores: [],
         }
+    },
+    beforeMount() {
+        this.getData();
     },
     methods: {
         getSelectedString() {
             return `${this.product[0].name} selected.`
         },
         getStoreString() {
+            this.getStoreInfo(this.store[0].id);
             return `${this.store[0].name} selected.`
+        },
+        getData() {
+            axios.get('/api/config')
+                .then(response => {
+                    this.merchants = response.data.merchants;
+                    this.products = response.data.products;
+                    this.stores = response.data.stores;
+                    this.title = response.data.title;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        getStoreInfo(storeId) {
+            axios.get(`/api/stores/${storeId}`)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
     },
 }
