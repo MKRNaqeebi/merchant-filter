@@ -63,6 +63,21 @@
                     :pagination="initialPagination"
                     v-model:selected="store"
                 />
+                <!-- text input from user -->
+                <q-input
+                    v-if="store.length"
+                    v-model="inputType"
+                    label="Input Type"
+                    filled
+                    clearable
+                />
+                <!-- button to submit input -->
+                <q-btn
+                    v-if="store.length"
+                    color="primary"
+                    label="Submit"
+                    @click="postStoreInfo(store[0].id)"
+                />
             </div>
         </div>
     </div>
@@ -80,6 +95,7 @@ export default {
             merchant: null,
             product: [],
             store: [],
+            inputType: '',
             title: 'Title: Title Title',
             initialPagination: {
                 rowsPerPage: 5,
@@ -98,7 +114,6 @@ export default {
             return `${this.product[0].name} selected.`
         },
         getStoreString() {
-            this.getStoreInfo(this.store[0].id);
             return `${this.store[0].name} selected.`
         },
         getData() {
@@ -113,8 +128,11 @@ export default {
                     console.log(error);
                 });
         },
-        getStoreInfo(storeId) {
-            axios.get(`/api/stores/${storeId}`)
+        postStoreInfo(storeId) {
+            axios.post('/api/stores', {
+                inputtype: this.inputType,
+                store: storeId,
+            })
                 .then(response => {
                     console.log(response.data);
                 })
