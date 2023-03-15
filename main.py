@@ -7,16 +7,29 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="res/static"), name="static")
+app.mount("/js", StaticFiles(directory="frontend/dist/js"), name="static")
+app.mount("/css", StaticFiles(directory="frontend/dist/css"), name="static")
+app.mount("/img", StaticFiles(directory="frontend/dist/img"), name="static")
+app.mount("/fonts", StaticFiles(directory="frontend/dist/fonts"), name="static")
+# app.mount("/favicon.ico", StaticFiles(directory="frontend/dist"), name="static")
 
+templates = Jinja2Templates(directory="frontend/dist")
 
-templates = Jinja2Templates(directory="res/templates")
+# rest api to get config
+@app.get("/config")
+async def read_item():
+    # read json file into dict
+    with open("config.json") as f:
+        dict_data = json.load(f)
+    return dict_data
 
+@app.get("/items/{store_id}")
+def read_item(store_id: int):
+    return {"item_id": store_id}
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    # read config.json into a dict
-    with open("config.json") as f:
-        config = json.load(f)
     # pass dict to template
-    return templates.TemplateResponse("index.html", {"request": request, "id": 2, "config": config})
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# uvicorn main:app --reload
